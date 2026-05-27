@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>S-play — Your Cinema, Unlimited</title>
+<meta name="description" content="Stream and search millions of YouTube videos in a beautiful cinema interface."/>
+<meta property="og:title" content="CineVault — Your Cinema, Unlimited"/>
+<meta property="og:description" content="Search and play YouTube videos in a stunning dark cinema UI."/>
+<meta name="theme-color" content="#0a0a0a"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg3:#1a1a1a;--bg4:#222;
+  --border:#1e1e1e;--border2:#2a2a2a;
+  --accent:#e63946;--accent2:#c1121f;
+  --text:#f0f0f0;--text2:#ccc;--text3:#888;--text4:#555;
+  --font:'DM Sans',sans-serif;--display:'Playfair Display',serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#111}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+
+/* HEADER */
+#hdr{position:sticky;top:0;z-index:100;background:rgba(10,10,10,.97);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px}
+#menu-btn{background:none;border:none;cursor:pointer;color:var(--text2);font-size:22px;padding:4px 8px;border-radius:6px}
+#menu-btn:hover{background:var(--bg3)}
+#logo{display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none}
+#logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:9px;display:flex;align-items:center;justify-content:center}
+#logo-text{font-family:var(--display);font-weight:800;font-size:19px;color:var(--text)}
+#sform{flex:1;max-width:580px;display:flex}
+#sinput{flex:1;background:#161616;border:1px solid var(--border2);border-right:none;color:var(--text);padding:10px 16px;border-radius:22px 0 0 22px;font-size:14px;font-family:var(--font);outline:none}
+#sinput:focus{border-color:#444}
+#sinput::placeholder{color:var(--text4)}
+#sbtn{background:var(--bg4);border:1px solid var(--border2);border-left:none;color:var(--text2);padding:10px 18px;border-radius:0 22px 22px 0;cursor:pointer;font-size:16px}
+.hactions{display:flex;gap:10px;align-items:center;margin-left:auto}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7b2d8b);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;cursor:pointer}
+
+/* LAYOUT */
+#wrap{display:flex}
+#sidebar{width:72px;flex-shrink:0;background:var(--bg);border-right:1px solid #181818;min-height:calc(100vh - 58px);position:sticky;top:58px;align-self:flex-start;overflow:hidden;transition:width .25s}
+#sidebar.open{width:220px}
+.nb{display:flex;align-items:center;gap:14px;width:100%;background:none;border:none;color:var(--text3);padding:13px 24px;cursor:pointer;font-size:14px;font-weight:600;text-align:left;white-space:nowrap;border-left:3px solid transparent;font-family:var(--font);transition:all .18s}
+.nb .ic{font-size:20px;flex-shrink:0}
+.nb .lb{opacity:0;transition:opacity .15s}
+#sidebar.open .nb .lb{opacity:1}
+.nb:hover{background:var(--bg3);color:var(--text2)}
+.nb.active{background:var(--bg3);color:var(--accent);border-left-color:var(--accent)}
+
+#main{flex:1;padding:22px 24px;min-width:0}
+
+/* HERO */
+#hero{background:linear-gradient(135deg,#1a0a14,#0d0d1a 60%,#0a1a0a);border-radius:16px;padding:38px 42px;margin-bottom:28px;position:relative;overflow:hidden}
+#hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(230,57,70,.13),transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(123,45,139,.1),transparent 50%)}
+#hero-c{position:relative}
+#hero h2{font-family:var(--display);font-size:38px;font-weight:800;line-height:1.15;background:linear-gradient(90deg,#f0f0f0,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#hero p{font-size:15px;color:var(--text3);margin-top:10px;max-width:480px;line-height:1.6}
+#hero-btn{margin-top:20px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;padding:12px 28px;border-radius:24px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);transition:opacity .2s,transform .2s}
+#hero-btn:hover{opacity:.88;transform:translateY(-1px)}
+
+/* PILLS */
+#pills{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;margin-bottom:20px;scrollbar-width:none}
+#pills::-webkit-scrollbar{display:none}
+.pill{flex-shrink:0;background:var(--bg3);color:var(--text2);border:1px solid var(--border2);padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:var(--font);transition:all .18s}
+.pill:hover{background:#2a2a2a}
+.pill.on{background:var(--accent);color:#fff;border-color:transparent}
+
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.st{font-family:var(--display);font-size:23px;font-weight:800}
+.sc{font-size:13px;color:var(--text4)}
+
+/* GRID */
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.vc{cursor:pointer;border-radius:12px;transition:transform .2s}
+.vc:hover{transform:scale(1.02)}
+.vt{position:relative;border-radius:10px;overflow:hidden}
+.vt img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;transition:filter .3s}
+.vc:hover .vt img{filter:brightness(.7)}
+.dur{position:absolute;bottom:6px;right:8px;background:rgba(0,0,0,.88);color:#fff;font-size:11px;padding:2px 6px;border-radius:4px;font-family:monospace;font-weight:700}
+.pov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.vc:hover .pov{opacity:1}
+.pob{width:52px;height:52px;border-radius:50%;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center}
+.bdg{position:absolute;top:8px;left:8px;background:#ff4444;color:#fff;font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px}
+.vi{padding:10px 4px 4px}
+.vn{font-weight:700;font-size:14px;color:#e8e8e8;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ch{font-size:12px;color:var(--text3);margin-top:5px}
+.mt{font-size:12px;color:var(--text4)}
+
+#empty{text-align:center;padding:90px 20px;display:none}
+#empty .ei{font-size:64px;margin-bottom:16px}
+#empty h3{font-size:20px;font-weight:700;color:#666}
+
+/* skeleton */
+.sk{background:linear-gradient(90deg,#1a1a1a 25%,#242424 50%,#1a1a1a 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:8px}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skc{border-radius:12px}
+.skt{aspect-ratio:16/9;width:100%}
+.skl{height:14px;margin-top:10px}
+
+/* =====================================================================
+   MODAL VIDEO PLAYER
+   The modal sits at the very top of the DOM stacking order (z-index 9999)
+   with a plain background. The iframe inside has NO parent with
+   overflow:hidden, clip-path, transform, filter, or will-change.
+   This is the ONLY reliable way to show YouTube video in a local HTML file.
+   ===================================================================== */
+#modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,.92);
+}
+#modal.show{display:flex;flex-direction:column}
+
+/* Close button */
+#modal-close{
+  position:absolute;top:16px;right:20px;
+  background:rgba(255,255,255,.12);border:none;color:#fff;
+  font-size:28px;line-height:1;padding:4px 12px;border-radius:8px;
+  cursor:pointer;z-index:2;font-family:var(--font);
+}
+#modal-close:hover{background:rgba(255,255,255,.22)}
+
+/* iframe container — absolutely no decorative CSS that creates stacking context */
+#iframe-container{
+  width:100%;
+  max-width:960px;
+  margin:60px auto 0;
+  /* aspect-ratio alone, no overflow, no clip, no transform */
+  aspect-ratio:16/9;
+  background:#000;
+}
+#iframe-container iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+}
+
+/* Info strip below player */
+#modal-info{
+  max-width:960px;
+  width:100%;
+  margin:16px auto 0;
+  padding:0 8px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+#modal-title{font-family:var(--display);font-size:18px;font-weight:800;color:#fff;flex:1;line-height:1.3}
+#modal-meta{font-size:12px;color:var(--text3);margin-top:4px}
+.modal-btns{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.mb{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.15);padding:7px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font);transition:background .2s}
+.mb:hover{background:rgba(255,255,255,.2)}
+.mb.liked{color:var(--accent);border-color:var(--accent)}
+#yt-link{display:inline-flex;align-items:center;gap:6px;background:#ff0000;color:#fff;border:none;padding:7px 16px;border-radius:20px;font-size:13px;font-weight:700;text-decoration:none;font-family:var(--font)}
+
+/* up next below modal info */
+#modal-queue{max-width:960px;width:100%;margin:16px auto 0;padding:0 8px 24px;display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
+#modal-queue::-webkit-scrollbar{display:none}
+.qc{flex-shrink:0;width:160px;cursor:pointer}
+.qc img{width:160px;height:90px;object-fit:cover;border-radius:8px;display:block;transition:filter .2s}
+.qc:hover img{filter:brightness(.7)}
+.qt{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border2);color:var(--text2);padding:10px 22px;border-radius:24px;font-size:13px;font-weight:600;z-index:99999;transition:transform .3s,opacity .3s;opacity:0;pointer-events:none;white-space:nowrap}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+@media(max-width:640px){
+  #main{padding:14px}
+  #hero{padding:24px 20px}
+  #hero h2{font-size:26px}
+  #grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+  #iframe-container{margin-top:50px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header id="hdr">
+  <button id="menu-btn" onclick="toggleSidebar()">☰</button>
+  <a id="logo" onclick="closeModal()">
+    <div id="logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+    <span id="logo-text">S-Play</span>
+  </a>
+  <form id="sform" onsubmit="doSearch(event)">
+    <input id="sinput" type="text" placeholder="Search YouTube videos…" autocomplete="off"/>
+    <button type="submit" id="sbtn">🔍</button>
+  </form>
+  <div class="hactions">
+    <div class="avatar">SS</div>
+  </div>
+</header>
+
+<div id="wrap">
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <button class="nb active" onclick="closeModal();setNav(this)"><span class="ic">🏠</span><span class="lb">Home</span></button>
+    <button class="nb" onclick="cat('trending movies 2024');setNav(this)"><span class="ic">🔥</span><span class="lb">Trending</span></button>
+    <button class="nb" onclick="cat('cinematic short films');setNav(this)"><span class="ic">🎬</span><span class="lb">Films</span></button>
+    <button class="nb" onclick="cat('music videos official 2024');setNav(this)"><span class="ic">🎵</span><span class="lb">Music</span></button>
+    <button class="nb" onclick="cat('documentary full length');setNav(this)"><span class="ic">📽️</span><span class="lb">Docs</span></button>
+    <button class="nb" onclick="cat('gaming highlights');setNav(this)"><span class="ic">🎮</span><span class="lb">Gaming</span></button>
+    <button class="nb" onclick="showWL()"><span class="ic">🕐</span><span class="lb">Watch Later</span></button>
+    <button class="nb" onclick="showLiked()"><span class="ic">❤️</span><span class="lb">Liked</span></button>
+  </nav>
+
+  <!-- MAIN -->
+  <main id="main">
+    <div id="hero">
+      <div id="hero-c">
+        <h2>Your Cinema,<br>Unlimited.</h2>
+        <p>Search and stream millions of YouTube videos — movies, music, docs & more.</p>
+        <button id="hero-btn" onclick="document.getElementById('sinput').focus()">▶ Start Watching</button>
+      </div>
+    </div>
+
+    <div id="pills">
+      <button class="pill on" onclick="pill(this,'cinematic trailer 2024')">All</button>
+      <button class="pill" onclick="pill(this,'action movies full')">Action</button>
+      <button class="pill" onclick="pill(this,'comedy shorts films')">Comedy</button>
+      <button class="pill" onclick="pill(this,'thriller suspense movie')">Thriller</button>
+      <button class="pill" onclick="pill(this,'sci-fi short film')">Sci-Fi</button>
+      <button class="pill" onclick="pill(this,'animated movie')">Animation</button>
+      <button class="pill" onclick="pill(this,'horror short film')">Horror</button>
+      <button class="pill" onclick="pill(this,'documentary nature')">Documentary</button>
+      <button class="pill" onclick="pill(this,'music video official')">Music</button>
+    </div>
+
+    <div class="sh">
+      <span class="st" id="gtitle">Featured</span>
+      <span class="sc" id="gcount"></span>
+    </div>
+
+    <div id="grid"></div>
+    <div id="empty"><div class="ei">🎬</div><h3>No videos found</h3></div>
+  </main>
+</div>
+
+<!-- ============================================================
+     MODAL PLAYER
+     This lives at root level, outside every other container.
+     The iframe inside has zero CSS that creates a new stacking
+     context on its ancestors. This is the guaranteed fix.
+     ============================================================ -->
+<div id="modal">
+  <button id="modal-close" onclick="closeModal()">✕</button>
+
+  <!-- PLAIN div, no overflow, no clip, no transform, no filter -->
+  <div id="iframe-container">
+    <!-- iframe injected by JS -->
+  </div>
+
+  <div id="modal-info">
+    <div>
+      <div id="modal-title"></div>
+      <div id="modal-meta"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="mb" id="like-btn" onclick="toggleLike()">♡ Like</button>
+      <button class="mb" onclick="toggleWL()">🕐 Save</button>
+      <button class="mb" onclick="share()">↗ Share</button>
+      <a id="yt-link" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+        YouTube
+      </a>
+    </div>
+  </div>
+
+  <div id="modal-queue"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────────────
+const API_KEY   = 'AIzaSyCXCTkxMyU_-Hvql7BruL9IAmODIgBUvvw';
+const YT_SEARCH = 'https://www.googleapis.com/youtube/v3/search';
+const YT_VIDEOS = 'https://www.googleapis.com/youtube/v3/videos';
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+let videos  = [];
+let curId   = null;
+let history = JSON.parse(localStorage.getItem('cv_hist') || '[]');
+let wl      = JSON.parse(localStorage.getItem('cv_wl')   || '[]');
+let lk      = JSON.parse(localStorage.getItem('cv_lk')   || '[]');
+
+// ── BOOT ───────────────────────────────────────────────────────────────────
+window.onload = () => load('cinematic trailer 2024');
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+// ── SIDEBAR ────────────────────────────────────────────────────────────────
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open') }
+function setNav(el){ document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active')); el.classList.add('active') }
+
+// ── CATEGORIES ─────────────────────────────────────────────────────────────
+function pill(el,q){ document.querySelectorAll('.pill').forEach(p=>p.classList.remove('on')); el.classList.add('on'); load(q) }
+function cat(q){ document.getElementById('sinput').value=q; load(q) }
+function doSearch(e){ e.preventDefault(); const q=document.getElementById('sinput').value.trim(); if(q) load(q) }
+
+// ── LOAD VIDEOS ────────────────────────────────────────────────────────────
+async function load(q){
+  skeleton();
+  try{
+    const sr = await fetch(`${YT_SEARCH}?part=snippet&type=video&maxResults=20&q=${encodeURIComponent(q)}&key=${API_KEY}`);
+    const sd = await sr.json();
+    if(sd.error){ fallback(); return; }
+    const ids = sd.items.map(i=>i.id.videoId).join(',');
+    const dr  = await fetch(`${YT_VIDEOS}?part=snippet,contentDetails,statistics&id=${ids}&key=${API_KEY}`);
+    const dd  = await dr.json();
+    videos = dd.items.map(v=>({
+      id:   v.id,
+      title:v.snippet.title,
+      ch:   v.snippet.channelTitle,
+      img:  v.snippet.thumbnails?.maxres?.url||v.snippet.thumbnails?.high?.url||v.snippet.thumbnails?.medium?.url,
+      desc: v.snippet.description,
+      views:fmtViews(v.statistics?.viewCount),
+      dur:  parseDur(v.contentDetails?.duration),
+      ago:  timeAgo(v.snippet.publishedAt),
+      live: v.snippet.liveBroadcastContent==='live',
+    }));
+    document.getElementById('gcount').textContent = videos.length+' videos';
+    renderGrid();
+  } catch(e){ fallback() }
+}
+
+function fallback(){
+  videos=[
+    {id:'dQw4w9WgXcQ',title:'Rick Astley — Never Gonna Give You Up',ch:'Rick Astley',img:'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',dur:'3:33',views:'1.4B views',ago:'15 yr ago',desc:''},
+    {id:'JGwWNGJdvx8',title:'Ed Sheeran — Shape of You',ch:'Ed Sheeran',img:'https://i.ytimg.com/vi/JGwWNGJdvx8/hqdefault.jpg',dur:'4:24',views:'5.9B views',ago:'7 yr ago',desc:''},
+    {id:'kJQP7kiw5Fk',title:'Luis Fonsi — Despacito',ch:'Luis Fonsi',img:'https://i.ytimg.com/vi/kJQP7kiw5Fk/hqdefault.jpg',dur:'4:42',views:'8.3B views',ago:'7 yr ago',desc:''},
+    {id:'RgKAFK5djSk',title:'Wiz Khalifa — See You Again',ch:'Wiz Khalifa',img:'https://i.ytimg.com/vi/RgKAFK5djSk/hqdefault.jpg',dur:'3:50',views:'6.2B views',ago:'9 yr ago',desc:''},
+    {id:'YQHsXMglC9A',title:'Adele — Hello',ch:'Adele',img:'https://i.ytimg.com/vi/YQHsXMglC9A/hqdefault.jpg',dur:'6:07',views:'3.3B views',ago:'8 yr ago',desc:''},
+    {id:'09R8_2nJtjg',title:'Maroon 5 — Sugar',ch:'Maroon 5',img:'https://i.ytimg.com/vi/09R8_2nJtjg/hqdefault.jpg',dur:'4:32',views:'3.8B views',ago:'9 yr ago',desc:''},
+    {id:'pRpeEdMmmQ0',title:'Shakira — Waka Waka',ch:'Shakira',img:'https://i.ytimg.com/vi/pRpeEdMmmQ0/hqdefault.jpg',dur:'3:34',views:'3.8B views',ago:'14 yr ago',desc:''},
+    {id:'CevxZvSJLk8',title:'Katy Perry — Roar',ch:'Katy Perry',img:'https://i.ytimg.com/vi/CevxZvSJLk8/hqdefault.jpg',dur:'4:20',views:'3.8B views',ago:'11 yr ago',desc:''},
+  ];
+  document.getElementById('gcount').textContent = videos.length+' videos';
+  renderGrid();
+  toast('Using sample videos — add a YouTube API key for live search');
+}
+
+// ── RENDER GRID ────────────────────────────────────────────────────────────
+function renderGrid(){
+  const g=document.getElementById('grid');
+  const e=document.getElementById('empty');
+  if(!videos.length){g.innerHTML='';e.style.display='';return}
+  e.style.display='none';
+  g.innerHTML=videos.map((v,i)=>`
+    <div class="vc" onclick="play(${i})">
+      <div class="vt">
+        <img src="${v.img}" loading="lazy" onerror="this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'" alt="${esc(v.title)}"/>
+        <span class="dur">${v.dur||'--:--'}</span>
+        <div class="pov"><div class="pob"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        ${v.live?'<span class="bdg">● LIVE</span>':i===0?'<span class="bdg">NEW</span>':''}
+      </div>
+      <div class="vi">
+        <div class="vn">${esc(v.title)}</div>
+        <div class="ch">${esc(v.ch)}</div>
+        <div class="mt">${v.views||''}${v.ago?' · '+v.ago:''}</div>
+      </div>
+    </div>`).join('');
+}
+
+function skeleton(){
+  document.getElementById('grid').innerHTML=Array(8).fill(0).map(()=>`
+    <div class="skc">
+      <div class="sk skt"></div>
+      <div class="sk skl" style="width:92%;margin-top:12px"></div>
+      <div class="sk skl" style="width:55%;margin-top:8px"></div>
+    </div>`).join('');
+  document.getElementById('empty').style.display='none';
+}
+
+// ── PLAY ───────────────────────────────────────────────────────────────────
+function play(i){
+  const v = videos[i];
+  if(!v) return;
+  curId = v.id;
+
+  // ── THE FIX ──────────────────────────────────────────────────────────────
+  // We create a brand-new <iframe> every time and inject it into a container
+  // that has:
+  //   • NO overflow:hidden
+  //   • NO clip-path
+  //   • NO border-radius (on the iframe or its direct parent)
+  //   • NO transform
+  //   • NO filter
+  //   • NO will-change
+  //   • NO backdrop-filter
+  //   • NO opacity < 1
+  // These are the ONLY CSS properties that trigger GPU layer flattening
+  // in Chromium, which causes the video layer to go black.
+  // The modal itself uses a plain fixed overlay with background color only.
+  // ─────────────────────────────────────────────────────────────────────────
+  const box = document.getElementById('iframe-container');
+  box.innerHTML = ''; // destroy old iframe completely
+
+  const fr = document.createElement('iframe');
+
+  // KEY FIX: youtube-nocookie.com/embed works when the page is opened
+  // from a file:// URL (double-clicked in browser). The regular
+  // youtube.com/embed sends a "Video unavailable" / configuration error
+  // when referrer is null or file://, because YouTube blocks embeds
+  // from unknown origins. youtube-nocookie.com has no such restriction.
+  const isWeb = location.protocol === 'https:' || location.protocol === 'http:';
+  const originParam = isWeb ? `&origin=${encodeURIComponent(location.origin)}` : '';
+  fr.setAttribute('src',
+    `https://www.youtube-nocookie.com/embed/${v.id}` +
+    `?autoplay=1&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3` +
+    originParam
+  );
+  fr.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen');
+  fr.setAttribute('allowfullscreen', '');
+  fr.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+  fr.style.cssText = 'width:100%;height:100%;border:0;display:block;';
+  box.appendChild(fr);
+
+  // Show modal
+  document.getElementById('modal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+
+  // Info
+  document.getElementById('modal-title').textContent = v.title;
+  document.getElementById('modal-meta').textContent  = v.ch + (v.views ? ' · '+v.views : '') + (v.ago ? ' · '+v.ago : '');
+  document.getElementById('yt-link').href            = `https://www.youtube.com/watch?v=${v.id}`;
+
+  const lb = document.getElementById('like-btn');
+  lb.textContent = lk.includes(v.id) ? '♥ Liked' : '♡ Like';
+  lb.classList.toggle('liked', lk.includes(v.id));
+
+  // Queue (up next)
+  document.getElementById('modal-queue').innerHTML = videos.filter((_,j)=>j!==i).slice(0,12).map((u,j)=>`
+    <div class="qc" onclick="play(${videos.indexOf(u)})">
+      <img src="${u.img}" onerror="this.src='https://i.ytimg.com/vi/${u.id}/hqdefault.jpg'"/>
+      <div class="qt">${esc(u.title)}</div>
+    </div>`).join('');
+
+  // History
+  history = history.filter(x=>x.id!==v.id);
+  history.unshift(v);
+  if(history.length>20) history=history.slice(0,20);
+  localStorage.setItem('cv_hist', JSON.stringify(history));
+}
+
+// ── CLOSE MODAL ────────────────────────────────────────────────────────────
+function closeModal(){
+  // Destroy iframe to stop audio
+  document.getElementById('iframe-container').innerHTML='';
+  document.getElementById('modal').classList.remove('show');
+  document.body.style.overflow='';
+  curId=null;
+}
+
+// ── WATCH LATER ────────────────────────────────────────────────────────────
+function toggleWL(){
+  if(!curId) return;
+  wl = wl.includes(curId) ? wl.filter(x=>x!==curId) : [...wl, curId];
+  localStorage.setItem('cv_wl', JSON.stringify(wl));
+  toast(wl.includes(curId) ? 'Added to Watch Later' : 'Removed from Watch Later');
+}
+function showWL(){
+  closeModal();
+  videos = history.filter(v=>wl.includes(v.id));
+  document.getElementById('gtitle').textContent='🕐 Watch Later';
+  document.getElementById('gcount').textContent=videos.length+' videos';
+  renderGrid();
+}
+
+// ── LIKED ──────────────────────────────────────────────────────────────────
+function toggleLike(){
+  if(!curId) return;
+  const btn=document.getElementById('like-btn');
+  if(lk.includes(curId)){
+    lk=lk.filter(x=>x!==curId);
+    btn.textContent='♡ Like'; btn.classList.remove('liked');
+    toast('Removed from Liked');
+  } else {
+    lk.push(curId);
+    btn.textContent='♥ Liked'; btn.classList.add('liked');
+    toast('Added to Liked ♥');
+  }
+  localStorage.setItem('cv_lk', JSON.stringify(lk));
+}
+function showLiked(){
+  closeModal();
+  videos = history.filter(v=>lk.includes(v.id));
+  document.getElementById('gtitle').textContent='❤️ Liked Videos';
+  document.getElementById('gcount').textContent=videos.length+' videos';
+  renderGrid();
+}
+
+// ── SHARE ──────────────────────────────────────────────────────────────────
+function share(){
+  if(!curId) return;
+  const url=`https://www.youtube.com/watch?v=${curId}`;
+  if(navigator.share) navigator.share({title:'CineVault',url});
+  else navigator.clipboard.writeText(url).then(()=>toast('Link copied!'));
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+let tt;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(tt); tt=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function parseDur(iso){
+  if(!iso) return null;
+  const m=iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if(!m) return null;
+  const h=+m[1]||0,mn=+m[2]||0,s=+m[3]||0;
+  return h?`${h}:${String(mn).padStart(2,'0')}:${String(s).padStart(2,'0')}`:`${mn}:${String(s).padStart(2,'0')}`;
+}
+function fmtViews(n){
+  if(!n) return '';
+  const v=+n;
+  return v>=1e9?(v/1e9).toFixed(1)+'B views':v>=1e6?(v/1e6).toFixed(1)+'M views':v>=1e3?(v/1e3).toFixed(1)+'K views':v+' views';
+}
+function timeAgo(d){
+  if(!d) return '';
+  const s=(Date.now()-new Date(d))/1000;
+  return s<3600?Math.floor(s/60)+' min ago':s<86400?Math.floor(s/3600)+' hr ago':s<2592000?Math.floor(s/86400)+' days ago':s<31536000?Math.floor(s/2592000)+' mo ago':Math.floor(s/31536000)+' yr ago';
+}
+function esc(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
